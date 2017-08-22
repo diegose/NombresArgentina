@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using Newtonsoft.Json;
 
 namespace Interactive
 {
@@ -10,25 +11,27 @@ namespace Interactive
     {
         static void Main(string[] args)
         {
-            var (names, people) = Load(args[0]);
+            var data = Load(args[0]);
             var range = Enumerable.Range(1922, 2015 - 1922 + 1);
             while (true)
             {
                 Console.Write("Name: ");
-                var name = Console.ReadLine().Normalize();
-                var byName = names.GetValueOrDefault(name);
+                var name = Console.ReadLine()?.Normalize();
+                if (string.IsNullOrWhiteSpace(name))
+                    return;
+                var byName = data.NamesByYear.GetValueOrDefault(name);
                 if (byName == null)
                     Console.WriteLine("Not found");
                 else
                 {
                     var maxPopularity = range.Aggregate(0M,
                         (currentMax, year) => Math.Max(currentMax,
-                            GetPopularity(names.GetValueOrDefault(name)?.GetValueOrDefault(year) ?? 0,
-                                people.GetValueOrDefault(year))));
+                            GetPopularity(data.NamesByYear.GetValueOrDefault(name)?.GetValueOrDefault(year) ?? 0,
+                                data.PeopleByYear.GetValueOrDefault(year))));
                     foreach (var year in range) //DB has those years
                     {
                         var nameCount = byName.GetValueOrDefault(year);
-                        var birthCount = people.GetValueOrDefault(year);
+                        var birthCount = data.PeopleByYear.GetValueOrDefault(year);
                         var popularity = GetPopularity(nameCount, birthCount);
                         if (popularity == maxPopularity)
                             Console.ForegroundColor = ConsoleColor.Yellow;
@@ -39,12 +42,21 @@ namespace Interactive
             }
         }
 
-        static (Dictionary<string, Dictionary<int, int>> names, Dictionary<int, int> people) Load(string fileName)
+        static Data Load(string fileName)
         {
-            var namesByYear = new Dictionary<string, Dictionary<int, int>>(10_000);
-            var peopleByYear = new Dictionary<int, int>(100);
+            var jsonFileName = fileName + ".json";
+            if (File.Exists(jsonFileName))
+                using (var reader = new StreamReader(jsonFileName))
+                using (var jsonReader = new JsonTextReader(reader))
+                {
+                    return JsonSerializer.Create().Deserialize<Data>(jsonReader);
+                }
             using (var reader = new StreamReader(fileName))
+            using (var writer = new StreamWriter(jsonFileName))
+            using (var jsonWriter = new JsonTextWriter(writer))
             {
+                var namesByYear = new Dictionary<string, Dictionary<int, int>>(10_000);
+                var peopleByYear = new Dictionary<int, int>(100);
                 reader.ReadLine(); //Skip header
                 var stopwatch = Stopwatch.StartNew();
                 string line;
@@ -85,7 +97,9 @@ namespace Interactive
                     }
                 }
                 Console.WriteLine($"Processed {recordCount} records, {invalidRecords} failed.");
-                return (namesByYear, peopleByYear);
+                var data = new Data { NamesByYear = namesByYear, PeopleByYear = peopleByYear };
+                JsonSerializer.Create().Serialize(jsonWriter, data);
+                return data;
             }
         }
 
@@ -93,5 +107,11 @@ namespace Interactive
         static decimal GetPopularity(int nameCount, int birthCount) => nameCount > 0 && birthCount > 0
             ? nameCount / (decimal)birthCount
             : 0;
+
+        public class Data
+        {
+            public Dictionary<string, Dictionary<int, int>> NamesByYear { get; set; }
+            public Dictionary<int, int> PeopleByYear { get; set; }
+        }
     }
 }
