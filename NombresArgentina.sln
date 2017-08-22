@@ -9,7 +9,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Common", "Common\Common.csp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Query", "Query\Query.csproj", "{6B8A0A62-AB1D-4174-AB38-58495227E83A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CreateIndexes", "CreateIndexes\CreateIndexes.csproj", "{BB3BB68A-BADD-4465-855B-50AACC067425}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CreateIndexes", "CreateIndexes\CreateIndexes.csproj", "{BB3BB68A-BADD-4465-855B-50AACC067425}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Commands", "Commands\Commands.csproj", "{DE93035D-63CD-4A98-AB95-A4C18CEA080B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{BB3BB68A-BADD-4465-855B-50AACC067425}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BB3BB68A-BADD-4465-855B-50AACC067425}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BB3BB68A-BADD-4465-855B-50AACC067425}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DE93035D-63CD-4A98-AB95-A4C18CEA080B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DE93035D-63CD-4A98-AB95-A4C18CEA080B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DE93035D-63CD-4A98-AB95-A4C18CEA080B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DE93035D-63CD-4A98-AB95-A4C18CEA080B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

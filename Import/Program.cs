@@ -2,8 +2,9 @@
 using System.Diagnostics;
 using System.IO;
 using CommandLine;
-using Raven.Abstractions.Data;
+using Commands;
 using Common;
+using Raven.Abstractions.Data;
 using Raven.Client.Document;
 
 namespace Import
