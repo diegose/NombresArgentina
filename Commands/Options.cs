@@ -1,6 +1,6 @@
 ﻿using CommandLine;
 
-namespace Common
+namespace Commands
 {
     public class Options
     {

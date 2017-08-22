@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using CommandLine;
+using Commands;
 using Common;
 
 namespace Query
