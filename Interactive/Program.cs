@@ -24,20 +24,20 @@ namespace Interactive
                     Console.WriteLine("Not found");
                 else
                 {
-                    var maxPopularity = range.Aggregate(0M,
-                        (currentMax, year) => Math.Max(currentMax,
-                            GetPopularity(data.NamesByYear.GetValueOrDefault(name)?.GetValueOrDefault(year) ?? 0,
-                                data.PeopleByYear.GetValueOrDefault(year))));
-                    foreach (var year in range) //DB has those years
-                    {
-                        var nameCount = byName.GetValueOrDefault(year);
-                        var birthCount = data.PeopleByYear.GetValueOrDefault(year);
-                        var popularity = GetPopularity(nameCount, birthCount);
-                        if (popularity == maxPopularity)
-                            Console.ForegroundColor = ConsoleColor.Yellow;
-                        Console.WriteLine($"{year}: {nameCount,6:N0} — {popularity,7:P2} de {birthCount,9:N0}");
-                        Console.ResetColor();
-                    }
+                    //var maxPopularity = range.Aggregate(0M,
+                    //    (currentMax, year) => Math.Max(currentMax,
+                    //        GetPopularity(data.NamesByYear.GetValueOrDefault(name)?.GetValueOrDefault(year) ?? 0,
+                    //            data.PeopleByYear.GetValueOrDefault(year))));
+                    //foreach (var year in range) //DB has those years
+                    //{
+                    //    var nameCount = byName.GetValueOrDefault(year);
+                    //    var birthCount = data.PeopleByYear.GetValueOrDefault(year);
+                    //    var popularity = GetPopularity(nameCount, birthCount);
+                    //    if (popularity == maxPopularity)
+                    //        Console.ForegroundColor = ConsoleColor.Yellow;
+                    //    Console.WriteLine($"{year}: {nameCount,6:N0} — {popularity,7:P2} de {birthCount,9:N0}");
+                    //    Console.ResetColor();
+                    //}
                 }
             }
         }
@@ -97,7 +97,12 @@ namespace Interactive
                     }
                 }
                 Console.WriteLine($"Processed {recordCount} records, {invalidRecords} failed.");
-                var data = new Data { NamesByYear = namesByYear, PeopleByYear = peopleByYear };
+                var data = new Data
+                {
+                    NamesByYear = namesByYear.ToDictionary(x => x.Key,
+                        x => x.Value.Select(v => new[] {v.Key, v.Value}).ToArray()),
+                    PeopleByYear = peopleByYear
+                };
                 JsonSerializer.Create().Serialize(jsonWriter, data);
                 return data;
             }
@@ -110,7 +115,7 @@ namespace Interactive
 
         public class Data
         {
-            public Dictionary<string, Dictionary<int, int>> NamesByYear { get; set; }
+            public Dictionary<string, int[][]> NamesByYear { get; set; }
             public Dictionary<int, int> PeopleByYear { get; set; }
         }
     }
